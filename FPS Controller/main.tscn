@@ -1,0 +1,119 @@
+[gd_scene load_steps=5 format=3 uid="uid://br4lrhsgen8o1"]
+
+[ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/proto_controller/proto_controller.tscn" id="1_d5ddn"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_6b8wp"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_d8re3"]
+sky_material = SubResource("ProceduralSkyMaterial_6b8wp")
+
+[sub_resource type="Environment" id="Environment_18bst"]
+background_mode = 2
+sky = SubResource("Sky_d8re3")
+tonemap_mode = 2
+glow_enabled = true
+
+[node name="Main" type="Node3D"]
+
+[node name="ProtoController" parent="." instance=ExtResource("1_d5ddn")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.2, 2.2, 0)
+SENSITIVITY = 1
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_18bst")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.801776, -0.316693, 0.506815, 0, 0.848048, 0.529919, -0.597625, -0.424876, 0.679944, 0, 23.5, 0)
+shadow_enabled = true
+
+[node name="Floor" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+use_collision = true
+size = Vector3(80, 2, 80)
+
+[node name="Right Side" type="CSGBox3D" parent="."]
+transform = Transform3D(0.8, 0, 0, 0, 0.6, 0, 0, 0, 0.8, -0.261667, 5.17333, 11.9567)
+use_collision = true
+size = Vector3(20, 14, 1)
+
+[node name="Window 1 TR" type="CSGBox3D" parent="Right Side"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.14135, 0.0499992)
+operation = 2
+use_collision = true
+size = Vector3(2, 2.2, 4.5)
+
+[node name="Window 1 TL" type="CSGBox3D" parent="Right Side"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 1.14135, 0.0499992)
+operation = 2
+use_collision = true
+size = Vector3(2, 2.2, 4.5)
+
+[node name="Window 1 BR" type="CSGBox3D" parent="Right Side"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.35865, 0.0499992)
+operation = 2
+use_collision = true
+size = Vector3(2, 2.2, 4.5)
+
+[node name="Window 1 BL" type="CSGBox3D" parent="Right Side"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, -1.45865, 0.0499992)
+operation = 2
+use_collision = true
+size = Vector3(2, 2.2, 4.5)
+
+[node name="Left Side" type="CSGBox3D" parent="."]
+transform = Transform3D(0.8, 0, 0, 0, 0.6, 0, 0, 0, 0.8, -0.261667, 5.17333, -12.0433)
+use_collision = true
+size = Vector3(20, 14, 1)
+
+[node name="Back Side" type="CSGBox3D" parent="."]
+transform = Transform3D(0.8, 0, 0, 0, 0.6, 0, 0, 0, 0.8, -7.86167, 5.17333, -0.0433334)
+use_collision = true
+size = Vector3(1, 14, 31)
+
+[node name="Wall" type="CSGBox3D" parent="."]
+transform = Transform3D(0.8, 0, 0, 0, 0.6, 0, 0, 0, 0.8, 7.33833, 5.17333, -0.0433334)
+use_collision = true
+size = Vector3(1, 14, 31)
+
+[node name="Door" type="CSGBox3D" parent="Wall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, -1.85149, -1.49463)
+operation = 2
+size = Vector3(2.6, 6.30298, 3.98926)
+
+[node name="Bedroom Seperator" type="CSGBox3D" parent="."]
+transform = Transform3D(0.8, 0, 0, 0, 0.6, 0, 0, 0, 0.8, -4.14167, 5.17333, 3.71667)
+use_collision = true
+size = Vector3(9.7, 14, 2)
+
+[node name="Row above" type="CSGBox3D" parent="Bedroom Seperator"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.6, 5.553, -4.76837e-07)
+size = Vector3(9.541, 2.884, 2)
+
+[node name="Second Floor" type="CSGBox3D" parent="."]
+transform = Transform3D(0.8, 0, 0, 0, 0.6, 0, 0, 0, 0.8, -0.261667, 9.43333, -0.0433334)
+visible = false
+use_collision = true
+size = Vector3(20, 2, 31)
+
+[node name="Opening" type="CSGBox3D" parent="Second Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, -11.7)
+operation = 2
+size = Vector3(13.7, 5.5, 5.5)
+
+[node name="Stair 1" type="CSGBox3D" parent="Second Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -10, -12)
+size = Vector3(2.4, 1, 5.1)
+
+[node name="Stair 2" type="CSGBox3D" parent="Second Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7, -12)
+size = Vector3(2.4, 1, 5.1)
+
+[node name="Stair 3" type="CSGBox3D" parent="Second Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, -4, -12)
+size = Vector3(2.4, 1, 5.1)
+
+[node name="Stair 4" type="CSGBox3D" parent="Second Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, -1, -12)
+size = Vector3(2.4, 1, 5.1)
