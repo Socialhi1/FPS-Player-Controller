@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://br4lrhsgen8o1"]
+[gd_scene load_steps=6 format=3 uid="uid://br4lrhsgen8o1"]
 
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/proto_controller/proto_controller.tscn" id="1_d5ddn"]
 
@@ -15,11 +15,13 @@ sky = SubResource("Sky_d8re3")
 tonemap_mode = 2
 glow_enabled = true
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ig7tw"]
+albedo_color = Color(0.448277, 0.664076, 0.318583, 1)
+
 [node name="Main" type="Node3D"]
 
 [node name="ProtoController" parent="." instance=ExtResource("1_d5ddn")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.2, 2.2, 0)
-SENSITIVITY = 1
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_18bst")
@@ -30,6 +32,7 @@ shadow_enabled = true
 
 [node name="Floor" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+material_override = SubResource("StandardMaterial3D_ig7tw")
 use_collision = true
 size = Vector3(80, 2, 80)
 
