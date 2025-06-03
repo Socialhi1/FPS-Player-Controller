@@ -5,11 +5,11 @@ extends CharacterBody3D
 
 var ACCEL = 400
 const FRICTION = 0.85
-const AIR_FRICTION = 0.95
+const AIR_FRICTION = .98
 const JUMP_VELOCITY = 8
 const WALL_JUMP_VELOCITY = 5
 const WALL_FRICTION = 0.5
-const WALL_JUMP_ALTERING = 6	
+const WALL_JUMP_ALTERING = 3
 const WALL_LATCH_TIME = 1
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
@@ -36,26 +36,37 @@ func _physics_process(delta):
 	# Add the gravity
 	if not is_on_floor():
 		velocity.y -= gravity * delta
-		
 	# Get the input direction and handle the movement/deceleration
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	direction = direction.rotated(Vector3.UP, $Head/Sight.rotation.y)
-	if direction:
-		velocity.x = direction.x * ACCEL * delta
-		velocity.z = direction.z * ACCEL * delta
-		
+	if direction.length() > 0:
+		if current_state == AIR:
+			velocity.x = lerp(velocity.x, direction.x * ACCEL * delta, 0.1)
+			velocity.z = lerp(velocity.z, direction.z * ACCEL * delta, 0.1)
+		else:
+			velocity.x = direction.x * ACCEL * delta
+			velocity.z = direction.z * ACCEL * delta
+	else:
+		if current_state == AIR:
+			velocity.x *= AIR_FRICTION
+			velocity.z *= AIR_FRICTION
+		else:
+			velocity.x *= FRICTION
+			velocity.z *= FRICTION
+
+
 	check_jump(direction)
 	move_and_slide()
 	update_state()
-	velocity.x *= FRICTION
-	velocity.z *= FRICTION
+
 	# Player move speed during states
 	if current_state == WALL:
 		velocity.y *= WALL_FRICTION + .3
 		ACCEL = 600
 	elif current_state == FLOOR:
 		ACCEL = 400
+		
 
 # Constantly update
 func update_state():

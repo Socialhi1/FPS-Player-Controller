@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://br4lrhsgen8o1"]
 
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/proto_controller/proto_controller.tscn" id="1_d5ddn"]
-[ext_resource type="Script" uid="uid://ppt21k4g4qel" path="res://ui.gd" id="2_0xm2m"]
+[ext_resource type="Script" path="res://ui.gd" id="2_0xm2m"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_6b8wp"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
