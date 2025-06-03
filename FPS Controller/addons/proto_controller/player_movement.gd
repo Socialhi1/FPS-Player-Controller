@@ -19,7 +19,6 @@ var gravity = ProjectSettings.get_setting("physics/3d/default_gravity") + 3
 const FLOOR = 0
 const WALL = 1
 const AIR = 2
-
 var current_state := AIR
 var has_wall_jumped := false
 
@@ -27,6 +26,8 @@ var has_wall_jumped := false
 var jump_count_max = 2
 var jump_count_current = 0
 
+# Signals
+signal jump_updated(current,max)
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -64,6 +65,7 @@ func update_state():
 		current_state = FLOOR
 		has_wall_jumped = false
 		jump_count_current = 0
+		emit_signal("jump_updated", jump_count_current, jump_count_max)
 	else:
 		current_state = AIR
 
@@ -73,8 +75,8 @@ func check_jump(dir):
 		if current_state == FLOOR:
 			velocity.y = JUMP_VELOCITY
 			jump_count_current += 1
-			if jump_count_current <= jump_count_max and Input.is_action_just_pressed("jump") and current_state == AIR:
-				velocity.y += JUMP_VELOCITY
+			emit_signal("jump_updated", jump_count_current, jump_count_max)
+
 		if current_state == WALL and not has_wall_jumped:
 			var target_velocity = get_wall_normal() * WALL_JUMP_VELOCITY
 			velocity.x = lerp(velocity.x, target_velocity.x, WALL_JUMP_ALTERING)
@@ -82,6 +84,10 @@ func check_jump(dir):
 			velocity += dir * WALL_JUMP_ALTERING
 			velocity.y += JUMP_VELOCITY
 			has_wall_jumped = true
+		if Input.is_action_just_pressed("jump") and jump_count_current < jump_count_max and current_state == AIR:
+			velocity.y = JUMP_VELOCITY
+			jump_count_current += 1
+			emit_signal("jump_updated", jump_count_current, jump_count_max)
 
 # Camera
 func _input(event):
