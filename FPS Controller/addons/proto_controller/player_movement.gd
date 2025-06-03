@@ -6,14 +6,14 @@ extends CharacterBody3D
 var ACCEL = 400
 const FRICTION = 0.85
 const AIR_FRICTION = 0.95
-const JUMP_VELOCITY = 6
+const JUMP_VELOCITY = 8
 const WALL_JUMP_VELOCITY = 5
 const WALL_FRICTION = 0.5
 const WALL_JUMP_ALTERING = 6	
 const WALL_LATCH_TIME = 1
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
-var gravity = ProjectSettings.get_setting("physics/3d/default_gravity") + 3
+var gravity = ProjectSettings.get_setting("physics/3d/default_gravity") + 10
 
 # Player States
 const FLOOR = 0
@@ -61,6 +61,8 @@ func _physics_process(delta):
 func update_state():
 	if is_on_wall_only():
 		current_state = WALL
+		jump_count_current = 0
+		emit_signal("jump_updated", jump_count_current, jump_count_max)
 	elif is_on_floor():
 		current_state = FLOOR
 		has_wall_jumped = false
@@ -84,6 +86,7 @@ func check_jump(dir):
 			velocity += dir * WALL_JUMP_ALTERING
 			velocity.y += JUMP_VELOCITY
 			has_wall_jumped = true
+
 		if Input.is_action_just_pressed("jump") and jump_count_current < jump_count_max and current_state == AIR:
 			velocity.y = JUMP_VELOCITY
 			jump_count_current += 1
