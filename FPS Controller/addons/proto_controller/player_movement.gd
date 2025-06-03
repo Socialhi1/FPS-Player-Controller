@@ -62,7 +62,9 @@ func _physics_process(delta):
 
 	# Player move speed during states
 	if current_state == WALL:
-		velocity.y *= WALL_FRICTION + .3
+		velocity.x *= 0.9  # small damping to keep momentum smooth
+		velocity.z *= 0.9
+		velocity.y *= WALL_FRICTION + 0.3
 		ACCEL = 600
 	elif current_state == FLOOR:
 		ACCEL = 400
@@ -91,11 +93,11 @@ func check_jump(dir):
 			emit_signal("jump_updated", jump_count_current, jump_count_max)
 
 		if current_state == WALL and not has_wall_jumped:
+			var cam_fwd = -$Head/Sight.transform.basis.z.normalized()
 			var target_velocity = get_wall_normal() * WALL_JUMP_VELOCITY
-			velocity.x = lerp(velocity.x, target_velocity.x, WALL_JUMP_ALTERING)
-			velocity.z = lerp(velocity.z, target_velocity.z, WALL_JUMP_ALTERING)
-			velocity += dir * WALL_JUMP_ALTERING
-			velocity.y += JUMP_VELOCITY
+			velocity.x = lerp(cam_fwd.x, target_velocity.x, WALL_JUMP_ALTERING)
+			velocity.z = lerp(cam_fwd.z, target_velocity.z, WALL_JUMP_ALTERING)
+			velocity.y += (JUMP_VELOCITY + 5)
 			has_wall_jumped = true
 
 		if Input.is_action_just_pressed("jump") and jump_count_current < jump_count_max and current_state == AIR:
