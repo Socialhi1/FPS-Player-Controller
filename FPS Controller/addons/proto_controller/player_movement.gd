@@ -3,7 +3,7 @@ extends CharacterBody3D
 # Configuration tools
 @export var SENSITIVITY: int
 
-const ACCEL = 400
+var ACCEL = 400
 const FRICTION = 0.85
 const AIR_FRICTION = 0.95
 const JUMP_VELOCITY = 6
@@ -22,6 +22,10 @@ const AIR = 2
 
 var current_state := AIR
 var has_wall_jumped := false
+
+# Player Stats
+var jump_count_max = 2
+var jump_count_current = 0
 
 
 func _ready():
@@ -45,9 +49,13 @@ func _physics_process(delta):
 	update_state()
 	velocity.x *= FRICTION
 	velocity.z *= FRICTION
+	# Player move speed during states
 	if current_state == WALL:
-		velocity.y *= WALL_FRICTION
-		
+		velocity.y *= WALL_FRICTION + .3
+		ACCEL = 600
+	elif current_state == FLOOR:
+		ACCEL = 400
+
 # Constantly update
 func update_state():
 	if is_on_wall_only():
@@ -55,6 +63,7 @@ func update_state():
 	elif is_on_floor():
 		current_state = FLOOR
 		has_wall_jumped = false
+		jump_count_current = 0
 	else:
 		current_state = AIR
 
@@ -63,6 +72,9 @@ func check_jump(dir):
 	if Input.is_action_just_pressed("jump"):
 		if current_state == FLOOR:
 			velocity.y = JUMP_VELOCITY
+			jump_count_current += 1
+			if jump_count_current <= jump_count_max and Input.is_action_just_pressed("jump") and current_state == AIR:
+				velocity.y += JUMP_VELOCITY
 		if current_state == WALL and not has_wall_jumped:
 			var target_velocity = get_wall_normal() * WALL_JUMP_VELOCITY
 			velocity.x = lerp(velocity.x, target_velocity.x, WALL_JUMP_ALTERING)
