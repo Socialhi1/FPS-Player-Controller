@@ -2,10 +2,11 @@ extends CharacterBody3D
 
 # Configuration tools
 @export var SENSITIVITY: int
+@export var HOVER : bool
 
 var ACCEL = 400
 const FRICTION = 0.85
-const AIR_FRICTION = .98
+const AIR_FRICTION = .7
 const JUMP_VELOCITY = 8
 const WALL_JUMP_VELOCITY = 5
 const WALL_FRICTION = 0.5
@@ -28,6 +29,7 @@ var jump_count_current = 0
 
 # Signals
 signal jump_updated(current,max)
+signal accel_updated(current)
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -40,11 +42,14 @@ func _physics_process(delta):
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	direction = direction.rotated(Vector3.UP, $Head/Sight.rotation.y)
+	ACCEL = 400
 	if direction.length() > 0:
 		if current_state == AIR:
 			velocity.x = lerp(velocity.x, direction.x * ACCEL * delta, 0.1)
 			velocity.z = lerp(velocity.z, direction.z * ACCEL * delta, 0.1)
 		else:
+			if current_state == FLOOR and Input.is_action_pressed("sprint"):
+				ACCEL = 550
 			velocity.x = direction.x * ACCEL * delta
 			velocity.z = direction.z * ACCEL * delta
 	else:
@@ -65,17 +70,22 @@ func _physics_process(delta):
 		velocity.x *= 0.9  # small damping to keep momentum smooth
 		velocity.z *= 0.9
 		velocity.y *= WALL_FRICTION + 0.3
-		ACCEL = 600
+		if ACCEL < 700:
+			ACCEL += 10
 	elif current_state == FLOOR:
 		ACCEL = 400
 		
 
 # Constantly update
 func update_state():
+	emit_signal("accel_updated", ACCEL)
 	if is_on_wall_only():
 		current_state = WALL
 		jump_count_current = 0
-		emit_signal("jump_updated", jump_count_current, jump_count_max)
+		if ACCEL < 700:
+			ACCEL += 10
+			emit_signal("jump_updated", jump_count_current, jump_count_max)
+		
 	elif is_on_floor():
 		current_state = FLOOR
 		has_wall_jumped = false

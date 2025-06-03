@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://br4lrhsgen8o1"]
 
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/proto_controller/proto_controller.tscn" id="1_d5ddn"]
-[ext_resource type="Script" path="res://ui.gd" id="2_0xm2m"]
+[ext_resource type="Script" uid="uid://ppt21k4g4qel" path="res://ui.gd" id="2_0xm2m"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_6b8wp"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -29,8 +29,16 @@ script = ExtResource("2_0xm2m")
 
 [node name="JumpLabel" type="Label" parent="ProtoController/UI"]
 offset_right = 94.0
-offset_bottom = 74.0
+offset_bottom = 23.0
 text = "Jumps: 0/2"
+
+[node name="AccelLabel" type="Label" parent="ProtoController/UI"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 25.0
+offset_bottom = 48.0
+grow_horizontal = 2
+text = "Accel: 0"
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_18bst")
@@ -130,4 +138,5 @@ size = Vector3(2.4, 1, 5.1)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, -1, -12)
 size = Vector3(2.4, 1, 5.1)
 
+[connection signal="accel_updated" from="ProtoController" to="ProtoController/UI" method="_on_proto_controller_accel_updated"]
 [connection signal="jump_updated" from="ProtoController" to="ProtoController/UI" method="_on_proto_controller_jump_updated"]
