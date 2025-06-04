@@ -9,4 +9,4 @@ func _on_proto_controller_accel_updated(current: Variant) -> void:
 
 
 func _on_proto_controller_state_updated(state: Variant) -> void:
-	$StateLabel.text = "State: %s" % [state]
+	$StateLabel1.text = "State: %s" % [state]

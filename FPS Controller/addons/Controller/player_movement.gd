@@ -2,20 +2,22 @@ extends CharacterBody3D
 
 # Configuration tools
 @export var SENSITIVITY: int
-@export var HOVER : bool
 
 var ACCEL = default_speed
 const FRICTION = 0.85
-const AIR_FRICTION = .7
+const AIR_FRICTION = 1.5
 const JUMP_VELOCITY = 8
-const WALL_JUMP_VELOCITY = 8
+
+const WALL_JUMP_VELOCITY = 13
 const WALL_FRICTION = 0.6
-const WALL_JUMP_ALTERING = 2
+const WALL_JUMP_ALTERING = 0.3
 const WALL_LATCH_DURATION = 2
 var WALL_LATCH_TIME = 0
+var wall_jump_lock_timer = 0.0
+const WALL_JUMP_LOCK_DURATION = 0.2
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
-var gravity = ProjectSettings.get_setting("physics/3d/default_gravity") + 10
+var gravity = ProjectSettings.get_setting("physics/3d/default_gravity") + 11
 
 # Player States
 const FLOOR = 0
@@ -23,11 +25,17 @@ const WALL = 1
 const AIR = 2
 var current_state := AIR
 var has_wall_jumped := false
+const STANDING = 0
+const RUNNING = 1
+const CROUCHING = 2
+const SLIDING = 3
 
 # Player Stats
 const default_speed = 500
 var jump_count_max = 2
 var jump_count_current = 0
+var speed_sprint = 150
+var speed_wallrun = 300
 
 # Signals
 signal jump_updated(current,max)
@@ -50,15 +58,11 @@ func _physics_process(delta):
 			velocity.x = lerp(velocity.x, direction.x * ACCEL * delta, 0.1)
 			velocity.z = lerp(velocity.z, direction.z * ACCEL * delta, 0.1)
 		elif current_state == FLOOR:
-			velocity.x = direction.x * ACCEL * delta
-			velocity.z = direction.z * ACCEL * delta
+			velocity.x = lerp(velocity.x, direction.x * ACCEL * delta, 0.1)
+			velocity.z = lerp(velocity.z, direction.z * ACCEL * delta, 0.1)
 	else:
-		if current_state == AIR:
-			velocity.x *= AIR_FRICTION
-			velocity.z *= AIR_FRICTION
-		else:
-			velocity.x = lerp(velocity.x, direction.x * ACCEL, 0.2)
-			velocity.z = lerp(velocity.z, direction.z * ACCEL, 0.2)
+		velocity.x = lerp(velocity.x, direction.x * ACCEL, 0.2)
+		velocity.z = lerp(velocity.z, direction.z * ACCEL, 0.2)
 
 	check_running()
 	check_jump(direction)
@@ -71,7 +75,6 @@ func _physics_process(delta):
 		velocity.z = lerp(velocity.z, direction.z * ACCEL * delta, 0.1)
 		velocity.y *= WALL_FRICTION + 0.3
 
-	
 
 # Constantly update
 func update_state():
@@ -84,37 +87,37 @@ func update_state():
 		jump_count_current = 0
 		emit_signal("jump_updated", jump_count_current, jump_count_max)
 		if ACCEL > default_speed and not Input.is_action_pressed("sprint"):
-			ACCEL -= 10
-		elif ACCEL < (default_speed - 20) and not ACCEL >  (default_speed + 20):
+			ACCEL -= 40
+		elif ACCEL < (default_speed) and not ACCEL >  (default_speed + 20):
 			ACCEL = default_speed
 		return
 
 	if is_on_wall_only():
 		current_state = WALL
 		jump_count_current = 0
-		if ACCEL < (default_speed + 300):
-			ACCEL += 30
+		if ACCEL < (default_speed + speed_wallrun):
+			ACCEL += 50
 			emit_signal("jump_updated", jump_count_current, jump_count_max)
-		if ACCEL > (default_speed + 300):
-			ACCEL -= 20
-		elif  ACCEL > (default_speed + 300) and not ACCEL < (default_speed + 280):
-			ACCEL = 700
-		
+		if ACCEL > (default_speed + speed_wallrun):
+			ACCEL -= 30
+		elif  ACCEL > (default_speed + speed_wallrun) and not ACCEL < (default_speed + speed_wallrun):
+			ACCEL = default_speed + speed_wallrun
 	else:
 		current_state = AIR
 
 func check_running():
 	if Input.is_action_pressed("sprint") and current_state == FLOOR:
-		if not ACCEL >= (default_speed + 150):
+		if not ACCEL >= (default_speed + speed_sprint):
 			ACCEL += 10
-		if ACCEL > (default_speed + 150):
-			ACCEL -= 10
-			if ACCEL > (default_speed + 140) and ACCEL < (default_speed + 160):
-				ACCEL = 550
-
+		if ACCEL > (default_speed + speed_sprint):
+			ACCEL -= 30
+			if ACCEL > (default_speed + speed_sprint) and ACCEL < (default_speed + speed_sprint):
+				ACCEL = speed_sprint
 
 # Jumping Controls
 func check_jump(dir):
+	
+	#Basic Jump
 	if Input.is_action_just_pressed("jump"):
 		if current_state == FLOOR:
 			velocity.y = JUMP_VELOCITY
@@ -122,17 +125,19 @@ func check_jump(dir):
 			
 			emit_signal("jump_updated", jump_count_current, jump_count_max)
 
+		# Wall Jumping
 		if current_state == WALL:
 			jump_count_current += 1
 			emit_signal("jump_updated", jump_count_current, jump_count_max)
-			ACCEL +=  200
+			ACCEL +=  100
 			var cam_fwd = -$Head/Sight.transform.basis.z.normalized()
 			var target_velocity = get_wall_normal() * WALL_JUMP_VELOCITY
 			velocity.x = lerp(cam_fwd.x, target_velocity.x, WALL_JUMP_ALTERING)
 			velocity.z = lerp(cam_fwd.z, target_velocity.z, WALL_JUMP_ALTERING)
-			velocity.y += (JUMP_VELOCITY + 3)
+			velocity.y += (WALL_JUMP_VELOCITY)
 			has_wall_jumped = true
 
+		# Double Jump
 		elif current_state == AIR and Input.is_action_just_pressed("jump") and jump_count_current < jump_count_max and has_wall_jumped == false:
 			velocity.y = JUMP_VELOCITY
 			jump_count_current += 1

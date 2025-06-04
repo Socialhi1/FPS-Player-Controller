@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://br4lrhsgen8o1"]
+[gd_scene load_steps=8 format=3 uid="uid://br4lrhsgen8o1"]
 
 [ext_resource type="PackedScene" uid="uid://bs72ogkvdd7d6" path="res://addons/Controller/Player.tscn" id="1_d5ddn"]
 [ext_resource type="Script" uid="uid://ppt21k4g4qel" path="res://ui.gd" id="2_0xm2m"]
@@ -18,6 +18,9 @@ glow_enabled = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ig7tw"]
 albedo_color = Color(0.448277, 0.664076, 0.318583, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0xm2m"]
+albedo_color = Color(0.803922, 0.866667, 0.72549, 1)
 
 [node name="Main" type="Node3D"]
 
@@ -40,7 +43,7 @@ offset_bottom = 48.0
 grow_horizontal = 2
 text = "Accel: 0"
 
-[node name="StateLabel" type="Label" parent="ProtoController/UI"]
+[node name="StateLabel1" type="Label" parent="ProtoController/UI"]
 offset_top = 51.0
 offset_right = 40.0
 offset_bottom = 74.0
@@ -59,120 +62,164 @@ material_override = SubResource("StandardMaterial3D_ig7tw")
 use_collision = true
 size = Vector3(157.1, 2, 80)
 
-[node name="Right Side" type="CSGBox3D" parent="."]
+[node name="House" type="CSGBox3D" parent="."]
 transform = Transform3D(0.8, 0, 0, 0, 0.6, 0, 0, 0, 0.8, -0.261667, 5.17333, 11.9567)
 use_collision = true
 size = Vector3(20, 14, 1)
 
-[node name="Window 1 TR" type="CSGBox3D" parent="Right Side"]
+[node name="Window 1 TR" type="CSGBox3D" parent="House"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.14135, 0.0499992)
 operation = 2
 use_collision = true
 size = Vector3(2, 2.2, 4.5)
 
-[node name="Window 1 TL" type="CSGBox3D" parent="Right Side"]
+[node name="Window 1 TL" type="CSGBox3D" parent="House"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 1.14135, 0.0499992)
 operation = 2
 use_collision = true
 size = Vector3(2, 2.2, 4.5)
 
-[node name="Window 1 BR" type="CSGBox3D" parent="Right Side"]
+[node name="Window 1 BR" type="CSGBox3D" parent="House"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.35865, 0.0499992)
 operation = 2
 use_collision = true
 size = Vector3(2, 2.2, 4.5)
 
-[node name="Window 1 BL" type="CSGBox3D" parent="Right Side"]
+[node name="Window 1 BL" type="CSGBox3D" parent="House"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, -1.45865, 0.0499992)
 operation = 2
 use_collision = true
 size = Vector3(2, 2.2, 4.5)
 
-[node name="Left Side" type="CSGBox3D" parent="."]
-transform = Transform3D(0.8, 0, 0, 0, 0.6, 0, 0, 0, 0.8, -0.261667, 5.17333, -12.0433)
+[node name="Left Side" type="CSGBox3D" parent="House"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -30)
 use_collision = true
 size = Vector3(20, 14, 1)
 
-[node name="Back Side" type="CSGBox3D" parent="."]
-transform = Transform3D(0.8, 0, 0, 0, 0.6, 0, 0, 0, 0.8, -7.86167, 5.17333, -0.0433334)
+[node name="Back Side" type="CSGBox3D" parent="House"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0, -15)
 use_collision = true
 size = Vector3(1, 14, 31)
 
-[node name="Wall" type="CSGBox3D" parent="."]
-transform = Transform3D(0.8, 0, 0, 0, 0.6, 0, 0, 0, 0.8, 7.33833, 5.17333, -0.0433334)
+[node name="Wall" type="CSGBox3D" parent="House"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 0, -15)
 use_collision = true
 size = Vector3(1, 14, 31)
 
-[node name="Door" type="CSGBox3D" parent="Wall"]
+[node name="Door" type="CSGBox3D" parent="House/Wall"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, -1.85149, -1.49463)
 operation = 2
 size = Vector3(2.6, 6.30298, 3.98926)
 
-[node name="Bedroom Seperator" type="CSGBox3D" parent="."]
-transform = Transform3D(0.8, 0, 0, 0, 0.6, 0, 0, 0, 0.8, -4.14167, 5.17333, 3.71667)
+[node name="Bedroom Seperator" type="CSGBox3D" parent="House"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.85, 0, -10.3)
 use_collision = true
 size = Vector3(9.7, 14, 2)
 
-[node name="Row above" type="CSGBox3D" parent="Bedroom Seperator"]
+[node name="Row above" type="CSGBox3D" parent="House/Bedroom Seperator"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.6, 5.553, -4.76837e-07)
 size = Vector3(9.541, 2.884, 2)
 
-[node name="Second Floor" type="CSGBox3D" parent="."]
-transform = Transform3D(0.8, 0, 0, 0, 0.6, 0, 0, 0, 0.8, -0.261667, 9.43333, -0.0433334)
+[node name="Second Floor" type="CSGBox3D" parent="House"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.1, -15)
 visible = false
 use_collision = true
 size = Vector3(20, 2, 31)
 
-[node name="Opening" type="CSGBox3D" parent="Second Floor"]
+[node name="Opening" type="CSGBox3D" parent="House/Second Floor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.15, 0, -11.7)
 operation = 2
 size = Vector3(13.7, 5.5, 5.5)
 
-[node name="Stair 1" type="CSGBox3D" parent="Second Floor"]
+[node name="Stair 1" type="CSGBox3D" parent="House/Second Floor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, -10, -12)
 size = Vector3(2.4, 1, 5.1)
 
-[node name="Stair 2" type="CSGBox3D" parent="Second Floor"]
+[node name="Stair 2" type="CSGBox3D" parent="House/Second Floor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7, -12)
 size = Vector3(2.4, 1, 5.1)
 
-[node name="Stair 3" type="CSGBox3D" parent="Second Floor"]
+[node name="Stair 3" type="CSGBox3D" parent="House/Second Floor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, -4, -12)
 size = Vector3(2.4, 1, 5.1)
 
-[node name="Stair 4" type="CSGBox3D" parent="Second Floor"]
+[node name="Stair 4" type="CSGBox3D" parent="House/Second Floor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, -1, -12)
 size = Vector3(2.4, 1, 5.1)
 
-[node name="Wall2" type="CSGBox3D" parent="."]
-transform = Transform3D(-3.49691e-08, 0, 0.8, 0, 0.6, 0, -0.8, 0, -3.49691e-08, 28.9383, 6.77333, -0.0433334)
+[node name="Floor3" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, -26.1, -39)
+material_override = SubResource("StandardMaterial3D_0xm2m")
+use_collision = true
+size = Vector3(157.1, 2, 80)
+
+[node name="Floor2" type="CSGBox3D" parent="Floor3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 78, -3.8147e-06)
+material_override = SubResource("StandardMaterial3D_ig7tw")
+use_collision = true
+size = Vector3(157.1, 2, 80)
+
+[node name="Floor3" type="CSGBox3D" parent="Floor3"]
+transform = Transform3D(-4.37114e-08, 1, -4.37114e-08, -1, -4.37114e-08, 4.37114e-08, 4.37114e-08, 4.37114e-08, 1, -78, 39.35, -1.90735e-06)
+material_override = SubResource("StandardMaterial3D_ig7tw")
+use_collision = true
+size = Vector3(79.8, 2, 80)
+
+[node name="Floor4" type="CSGBox3D" parent="Floor3"]
+transform = Transform3D(-4.37114e-08, 1, -4.37114e-08, -1, -4.37114e-08, 4.37114e-08, 4.37114e-08, 4.37114e-08, 1, 77.8, 39.35, -1.90735e-06)
+material_override = SubResource("StandardMaterial3D_ig7tw")
+use_collision = true
+size = Vector3(79.8, 2, 80)
+
+[node name="Parkour 1" type="CSGBox3D" parent="."]
+transform = Transform3D(-3.49691e-08, 0, 0.8, 0, 0.6, 0, -0.8, 0, -3.49691e-08, 28.9383, 6.77333, -0.0433331)
 use_collision = true
 size = Vector3(1, 14, 12.3)
 
-[node name="Wall3" type="CSGBox3D" parent="Wall2"]
+[node name="Wall3" type="CSGBox3D" parent="Parkour 1"]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -11, 3.16662, 18.25)
 use_collision = true
 size = Vector3(1, 14, 14.7)
 
-[node name="Wall4" type="CSGBox3D" parent="Wall2"]
+[node name="Wall4" type="CSGBox3D" parent="Parkour 1"]
 transform = Transform3D(0.939693, -0.34202, -2.63612e-09, 0.34202, 0.939693, 1.49502e-08, -2.63613e-09, -1.49502e-08, 1, -22.125, 14.8333, 5.5)
 use_collision = true
 size = Vector3(1, 14, 14.7)
 
-[node name="Wall5" type="CSGBox3D" parent="Wall2"]
+[node name="Wall5" type="CSGBox3D" parent="Parkour 1"]
 transform = Transform3D(-7.5904e-09, 4.30473e-08, -1, 0.984808, 0.173648, -2.96059e-15, 0.173648, -0.984808, -4.37114e-08, -11, 13, -8.625)
 use_collision = true
 size = Vector3(1, 14, 14.7)
 
-[node name="Wall6" type="CSGBox3D" parent="Wall2"]
+[node name="Wall6" type="CSGBox3D" parent="Parkour 1"]
 transform = Transform3D(4.10752e-08, 1.49497e-08, -1, 0.34202, -0.939693, 8.88178e-15, -0.939693, -0.34202, -4.37114e-08, -11, 22.5, 7.875)
 use_collision = true
 size = Vector3(1, 5.2, 5.7)
 
-[node name="Wall7" type="CSGBox3D" parent="Wall2"]
+[node name="Wall7" type="CSGBox3D" parent="Parkour 1"]
 transform = Transform3D(-1.62838e-15, 4.37114e-08, -1, 1, 7.45058e-08, -2.96059e-15, 3.72529e-08, -1, -4.37114e-08, -11, 24.5833, 15.3125)
 use_collision = true
 size = Vector3(1, 14, 14.7)
+
+[node name="Parkour 2" type="CSGBox3D" parent="."]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -21.3, 5.96662, 18.25)
+use_collision = true
+size = Vector3(1, 5.1, 7.6)
+
+[node name="Wall4" type="CSGBox3D" parent="Parkour 2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.2, 2.1, 7.9)
+use_collision = true
+size = Vector3(1, 5.1, 7.6)
+
+[node name="Wall5" type="CSGBox3D" parent="Parkour 2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.53674e-06, 2.1, 15.7)
+use_collision = true
+size = Vector3(1, 5.1, 7.6)
+
+[node name="Wall6" type="CSGBox3D" parent="Parkour 2"]
+transform = Transform3D(-4.37114e-08, -7.10543e-15, -1, 1, -4.37114e-08, -4.37114e-08, -4.37114e-08, -1, 7.10543e-15, -3.89999, 2.1, 27.2)
+use_collision = true
+size = Vector3(1, 5.1, 7.6)
 
 [connection signal="accel_updated" from="ProtoController" to="ProtoController/UI" method="_on_proto_controller_accel_updated"]
 [connection signal="jump_updated" from="ProtoController" to="ProtoController/UI" method="_on_proto_controller_jump_updated"]
