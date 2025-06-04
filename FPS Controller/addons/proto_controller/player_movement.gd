@@ -58,7 +58,7 @@ func _physics_process(delta):
 			velocity.x = lerp(velocity.x, direction.x * ACCEL, 0.2)
 			velocity.z = lerp(velocity.z, direction.z * ACCEL, 0.2)
 
-
+	check_running()
 	check_jump(direction)
 	move_and_slide()
 	update_state()
@@ -68,14 +68,7 @@ func _physics_process(delta):
 		velocity.x = lerp(velocity.x, direction.x * ACCEL * delta, 0.1)
 		velocity.z = lerp(velocity.z, direction.z * ACCEL * delta, 0.1)
 		velocity.y *= WALL_FRICTION + 0.3
-	elif current_state == FLOOR:
-		if Input.is_action_pressed("sprint"):
-			if ACCEL < 550:
-				ACCEL += 10
-		if ACCEL > 400 and not Input.is_action_pressed("sprint"):
-			ACCEL -= 10
-		elif ACCEL < 400 and not ACCEL >  400:
-			ACCEL = 400
+
 	
 
 # Constantly update
@@ -88,6 +81,10 @@ func update_state():
 		#has_wall_jumped = false
 		jump_count_current = 0
 		emit_signal("jump_updated", jump_count_current, jump_count_max)
+		if ACCEL > 400 and not Input.is_action_pressed("sprint"):
+			ACCEL -= 10
+		elif ACCEL < 380 and not ACCEL >  420:
+			ACCEL = 400
 		return
 
 	if is_on_wall() and not is_on_floor():
@@ -103,6 +100,14 @@ func update_state():
 	else:
 		current_state = AIR
 
+func check_running():
+	if Input.is_action_pressed("sprint") and current_state == FLOOR:
+		if not ACCEL >= 550:
+			ACCEL += 10
+		if ACCEL > 550:
+			ACCEL -= 10
+			if ACCEL > 540 and ACCEL < 560:
+				ACCEL = 550
 
 
 # Jumping Controls
