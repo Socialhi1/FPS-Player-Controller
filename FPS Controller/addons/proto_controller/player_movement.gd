@@ -30,6 +30,7 @@ var jump_count_current = 0
 # Signals
 signal jump_updated(current,max)
 signal accel_updated(current)
+signal state_updated(state)
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
@@ -64,8 +65,8 @@ func _physics_process(delta):
 
 	# Player move speed during states
 	if current_state == WALL:
-		velocity.x *= 0.9  # small damping to keep momentum smooth
-		velocity.z *= 0.9
+		velocity.x = lerp(velocity.x, direction.x * ACCEL * delta, 0.1)
+		velocity.z = lerp(velocity.z, direction.z * ACCEL * delta, 0.1)
 		velocity.y *= WALL_FRICTION + 0.3
 	elif current_state == FLOOR:
 		if Input.is_action_pressed("sprint"):
@@ -75,28 +76,34 @@ func _physics_process(delta):
 			ACCEL -= 10
 		elif ACCEL < 400 and not ACCEL >  400:
 			ACCEL = 400
+	
 
 # Constantly update
 func update_state():
 	emit_signal("accel_updated", ACCEL)
-	if is_on_wall_only():
+	emit_signal("state_updated", current_state)
+	
+	if is_on_floor():
+		current_state = FLOOR
+		#has_wall_jumped = false
+		jump_count_current = 0
+		emit_signal("jump_updated", jump_count_current, jump_count_max)
+		return
+
+	if is_on_wall() and not is_on_floor():
 		current_state = WALL
 		jump_count_current = 0
 		if ACCEL < 700:
 			ACCEL += 30
 			emit_signal("jump_updated", jump_count_current, jump_count_max)
 		if ACCEL > 700:
-			ACCEL -= 10
+			ACCEL -= 20
 		elif  ACCEL > 700 and not ACCEL < 680:
 			ACCEL = 700
-		
-	elif is_on_floor():
-		current_state = FLOOR
-		#has_wall_jumped = false
-		jump_count_current = 0
-		emit_signal("jump_updated", jump_count_current, jump_count_max)
 	else:
 		current_state = AIR
+
+
 
 # Jumping Controls
 func check_jump(dir):
@@ -104,9 +111,12 @@ func check_jump(dir):
 		if current_state == FLOOR:
 			velocity.y = JUMP_VELOCITY
 			jump_count_current += 1
+			
 			emit_signal("jump_updated", jump_count_current, jump_count_max)
 
 		if current_state == WALL: #and not has_wall_jumped:
+			jump_count_current += 1
+			emit_signal("jump_updated", jump_count_current, jump_count_max)
 			ACCEL +=  75
 			var cam_fwd = -$Head/Sight.transform.basis.z.normalized()
 			var target_velocity = get_wall_normal() * WALL_JUMP_VELOCITY
@@ -115,7 +125,7 @@ func check_jump(dir):
 			velocity.y += (JUMP_VELOCITY + 3)
 			#has_wall_jumped = true
 
-		if Input.is_action_just_pressed("jump") and jump_count_current < jump_count_max and current_state == AIR:
+		elif current_state == AIR and Input.is_action_just_pressed("jump") and jump_count_current < jump_count_max:
 			velocity.y = JUMP_VELOCITY
 			jump_count_current += 1
 			emit_signal("jump_updated", jump_count_current, jump_count_max)

@@ -6,3 +6,7 @@ func _on_proto_controller_jump_updated(current: Variant, max: Variant) -> void:
 
 func _on_proto_controller_accel_updated(current: Variant) -> void:
 	$AccelLabel.text = "Accel: %d" % [current]
+
+
+func _on_proto_controller_state_updated(state: Variant) -> void:
+	$StateLabel.text = "State: %s" % [state]

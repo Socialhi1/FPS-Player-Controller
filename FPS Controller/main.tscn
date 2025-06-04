@@ -40,6 +40,12 @@ offset_bottom = 48.0
 grow_horizontal = 2
 text = "Accel: 0"
 
+[node name="StateLabel" type="Label" parent="ProtoController/UI"]
+offset_top = 51.0
+offset_right = 40.0
+offset_bottom = 74.0
+text = "State: Floor"
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_18bst")
 
@@ -150,3 +156,4 @@ size = Vector3(1, 14, 31)
 
 [connection signal="accel_updated" from="ProtoController" to="ProtoController/UI" method="_on_proto_controller_accel_updated"]
 [connection signal="jump_updated" from="ProtoController" to="ProtoController/UI" method="_on_proto_controller_jump_updated"]
+[connection signal="state_updated" from="ProtoController" to="ProtoController/UI" method="_on_proto_controller_state_updated"]
