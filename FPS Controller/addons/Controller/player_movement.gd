@@ -4,14 +4,15 @@ extends CharacterBody3D
 @export var SENSITIVITY: int
 @export var HOVER : bool
 
-var ACCEL = 400
+var ACCEL = default_speed
 const FRICTION = 0.85
 const AIR_FRICTION = .7
 const JUMP_VELOCITY = 8
-const WALL_JUMP_VELOCITY = 5
-const WALL_FRICTION = 0.5
-const WALL_JUMP_ALTERING = 4
-const WALL_LATCH_TIME = 1
+const WALL_JUMP_VELOCITY = 8
+const WALL_FRICTION = 0.6
+const WALL_JUMP_ALTERING = 2
+const WALL_LATCH_DURATION = 2
+var WALL_LATCH_TIME = 0
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity") + 10
@@ -21,9 +22,10 @@ const FLOOR = 0
 const WALL = 1
 const AIR = 2
 var current_state := AIR
-#var has_wall_jumped := false
+var has_wall_jumped := false
 
 # Player Stats
+const default_speed = 500
 var jump_count_max = 2
 var jump_count_current = 0
 
@@ -78,35 +80,36 @@ func update_state():
 	
 	if is_on_floor():
 		current_state = FLOOR
-		#has_wall_jumped = false
+		has_wall_jumped = false
 		jump_count_current = 0
 		emit_signal("jump_updated", jump_count_current, jump_count_max)
-		if ACCEL > 400 and not Input.is_action_pressed("sprint"):
+		if ACCEL > default_speed and not Input.is_action_pressed("sprint"):
 			ACCEL -= 10
-		elif ACCEL < 380 and not ACCEL >  420:
-			ACCEL = 400
+		elif ACCEL < (default_speed - 20) and not ACCEL >  (default_speed + 20):
+			ACCEL = default_speed
 		return
 
-	if is_on_wall() and not is_on_floor():
+	if is_on_wall_only():
 		current_state = WALL
 		jump_count_current = 0
-		if ACCEL < 700:
+		if ACCEL < (default_speed + 300):
 			ACCEL += 30
 			emit_signal("jump_updated", jump_count_current, jump_count_max)
-		if ACCEL > 700:
+		if ACCEL > (default_speed + 300):
 			ACCEL -= 20
-		elif  ACCEL > 700 and not ACCEL < 680:
+		elif  ACCEL > (default_speed + 300) and not ACCEL < (default_speed + 280):
 			ACCEL = 700
+		
 	else:
 		current_state = AIR
 
 func check_running():
 	if Input.is_action_pressed("sprint") and current_state == FLOOR:
-		if not ACCEL >= 550:
+		if not ACCEL >= (default_speed + 150):
 			ACCEL += 10
-		if ACCEL > 550:
+		if ACCEL > (default_speed + 150):
 			ACCEL -= 10
-			if ACCEL > 540 and ACCEL < 560:
+			if ACCEL > (default_speed + 140) and ACCEL < (default_speed + 160):
 				ACCEL = 550
 
 
@@ -119,18 +122,18 @@ func check_jump(dir):
 			
 			emit_signal("jump_updated", jump_count_current, jump_count_max)
 
-		if current_state == WALL: #and not has_wall_jumped:
+		if current_state == WALL:
 			jump_count_current += 1
 			emit_signal("jump_updated", jump_count_current, jump_count_max)
-			ACCEL +=  75
+			ACCEL +=  200
 			var cam_fwd = -$Head/Sight.transform.basis.z.normalized()
 			var target_velocity = get_wall_normal() * WALL_JUMP_VELOCITY
 			velocity.x = lerp(cam_fwd.x, target_velocity.x, WALL_JUMP_ALTERING)
 			velocity.z = lerp(cam_fwd.z, target_velocity.z, WALL_JUMP_ALTERING)
 			velocity.y += (JUMP_VELOCITY + 3)
-			#has_wall_jumped = true
+			has_wall_jumped = true
 
-		elif current_state == AIR and Input.is_action_just_pressed("jump") and jump_count_current < jump_count_max:
+		elif current_state == AIR and Input.is_action_just_pressed("jump") and jump_count_current < jump_count_max and has_wall_jumped == false:
 			velocity.y = JUMP_VELOCITY
 			jump_count_current += 1
 			emit_signal("jump_updated", jump_count_current, jump_count_max)
