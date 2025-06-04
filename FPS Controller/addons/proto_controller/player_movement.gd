@@ -10,7 +10,7 @@ const AIR_FRICTION = .7
 const JUMP_VELOCITY = 8
 const WALL_JUMP_VELOCITY = 5
 const WALL_FRICTION = 0.5
-const WALL_JUMP_ALTERING = 3
+const WALL_JUMP_ALTERING = 4
 const WALL_LATCH_TIME = 1
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
@@ -42,7 +42,6 @@ func _physics_process(delta):
 	var input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
 	var direction = (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 	direction = direction.rotated(Vector3.UP, $Head/Sight.rotation.y)
-	ACCEL = 400
 	if direction.length() > 0:
 		if current_state == AIR:
 			velocity.x = lerp(velocity.x, direction.x * ACCEL * delta, 0.1)
@@ -57,8 +56,8 @@ func _physics_process(delta):
 			velocity.x *= AIR_FRICTION
 			velocity.z *= AIR_FRICTION
 		else:
-			velocity.x *= FRICTION
-			velocity.z *= FRICTION
+			velocity.x = lerp(velocity.x, direction.x * ACCEL, 0.2)
+			velocity.z = lerp(velocity.z, direction.z * ACCEL, 0.2)
 
 
 	check_jump(direction)
@@ -71,10 +70,12 @@ func _physics_process(delta):
 		velocity.z *= 0.9
 		velocity.y *= WALL_FRICTION + 0.3
 		if ACCEL < 700:
-			ACCEL += 10
+			ACCEL += 4
+			emit_signal("accel_updated", ACCEL)
+		elif ACCEL > 700:
+			ACCEL  -= 2;
 	elif current_state == FLOOR:
 		ACCEL = 400
-		
 
 # Constantly update
 func update_state():
@@ -107,7 +108,7 @@ func check_jump(dir):
 			var target_velocity = get_wall_normal() * WALL_JUMP_VELOCITY
 			velocity.x = lerp(cam_fwd.x, target_velocity.x, WALL_JUMP_ALTERING)
 			velocity.z = lerp(cam_fwd.z, target_velocity.z, WALL_JUMP_ALTERING)
-			velocity.y += (JUMP_VELOCITY + 5)
+			velocity.y += (JUMP_VELOCITY + 3)
 			has_wall_jumped = true
 
 		if Input.is_action_just_pressed("jump") and jump_count_current < jump_count_max and current_state == AIR:
