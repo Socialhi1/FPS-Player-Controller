@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://bs72ogkvdd7d6"]
 
-[ext_resource type="Script" uid="uid://dt5bwfw85cvlc" path="res://addons/proto_controller/player_movement.gd" id="1_g2uji"]
+[ext_resource type="Script" uid="uid://dt5bwfw85cvlc" path="res://addons/Controller/player_movement.gd" id="1_g2uji"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iof21"]
 albedo_color = Color(0.91806, 0.575202, 0.222449, 1)
