@@ -46,9 +46,7 @@ func _physics_process(delta):
 		if current_state == AIR:
 			velocity.x = lerp(velocity.x, direction.x * ACCEL * delta, 0.1)
 			velocity.z = lerp(velocity.z, direction.z * ACCEL * delta, 0.1)
-		else:
-			if current_state == FLOOR and Input.is_action_pressed("sprint"):
-				ACCEL = 550
+		elif current_state == FLOOR:
 			velocity.x = direction.x * ACCEL * delta
 			velocity.z = direction.z * ACCEL * delta
 	else:
@@ -70,7 +68,10 @@ func _physics_process(delta):
 		velocity.z *= 0.9
 		velocity.y *= WALL_FRICTION + 0.3
 	elif current_state == FLOOR:
-		if ACCEL > 400:
+		if Input.is_action_pressed("sprint"):
+			if ACCEL < 550:
+				ACCEL += 10
+		if ACCEL > 400 and not Input.is_action_pressed("sprint"):
 			ACCEL -= 10
 		elif ACCEL < 400 and not ACCEL >  400:
 			ACCEL = 400
