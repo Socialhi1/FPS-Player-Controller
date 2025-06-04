@@ -21,7 +21,7 @@ const FLOOR = 0
 const WALL = 1
 const AIR = 2
 var current_state := AIR
-var has_wall_jumped := false
+#var has_wall_jumped := false
 
 # Player Stats
 var jump_count_max = 2
@@ -69,13 +69,11 @@ func _physics_process(delta):
 		velocity.x *= 0.9  # small damping to keep momentum smooth
 		velocity.z *= 0.9
 		velocity.y *= WALL_FRICTION + 0.3
-		if ACCEL < 700:
-			ACCEL += 4
-			emit_signal("accel_updated", ACCEL)
-		elif ACCEL > 700:
-			ACCEL  -= 2;
 	elif current_state == FLOOR:
-		ACCEL = 400
+		if ACCEL > 400:
+			ACCEL -= 10
+		elif ACCEL < 400 and not ACCEL >  400:
+			ACCEL = 400
 
 # Constantly update
 func update_state():
@@ -84,12 +82,16 @@ func update_state():
 		current_state = WALL
 		jump_count_current = 0
 		if ACCEL < 700:
-			ACCEL += 10
+			ACCEL += 30
 			emit_signal("jump_updated", jump_count_current, jump_count_max)
+		if ACCEL > 700:
+			ACCEL -= 10
+		elif  ACCEL > 700 and not ACCEL < 680:
+			ACCEL = 700
 		
 	elif is_on_floor():
 		current_state = FLOOR
-		has_wall_jumped = false
+		#has_wall_jumped = false
 		jump_count_current = 0
 		emit_signal("jump_updated", jump_count_current, jump_count_max)
 	else:
@@ -103,13 +105,14 @@ func check_jump(dir):
 			jump_count_current += 1
 			emit_signal("jump_updated", jump_count_current, jump_count_max)
 
-		if current_state == WALL and not has_wall_jumped:
+		if current_state == WALL: #and not has_wall_jumped:
+			ACCEL +=  75
 			var cam_fwd = -$Head/Sight.transform.basis.z.normalized()
 			var target_velocity = get_wall_normal() * WALL_JUMP_VELOCITY
 			velocity.x = lerp(cam_fwd.x, target_velocity.x, WALL_JUMP_ALTERING)
 			velocity.z = lerp(cam_fwd.z, target_velocity.z, WALL_JUMP_ALTERING)
 			velocity.y += (JUMP_VELOCITY + 3)
-			has_wall_jumped = true
+			#has_wall_jumped = true
 
 		if Input.is_action_just_pressed("jump") and jump_count_current < jump_count_max and current_state == AIR:
 			velocity.y = JUMP_VELOCITY
