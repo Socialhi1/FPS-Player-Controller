@@ -10,14 +10,14 @@ const JUMP_VELOCITY = 8
 
 const WALL_JUMP_VELOCITY = 13
 const WALL_FRICTION = 0.6
-const WALL_JUMP_ALTERING = 0.3
+const WALL_JUMP_ALTERING = 2
 const WALL_LATCH_DURATION = 2
 var WALL_LATCH_TIME = 0
 var wall_jump_lock_timer = 0.0
 const WALL_JUMP_LOCK_DURATION = 0.2
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
-var gravity = ProjectSettings.get_setting("physics/3d/default_gravity") + 11
+var gravity = ProjectSettings.get_setting("physics/3d/default_gravity") + 13
 
 # Player States
 const FLOOR = 0
@@ -55,8 +55,8 @@ func _physics_process(delta):
 	direction = direction.rotated(Vector3.UP, $Head/Sight.rotation.y)
 	if direction.length() > 0:
 		if current_state == AIR:
-			velocity.x = lerp(velocity.x, direction.x * ACCEL * delta, 0.1)
-			velocity.z = lerp(velocity.z, direction.z * ACCEL * delta, 0.1)
+			velocity.x = lerp(velocity.x, direction.x * ACCEL * delta, 0.07)
+			velocity.z = lerp(velocity.z, direction.z * ACCEL * delta, 0.07)
 		elif current_state == FLOOR:
 			velocity.x = lerp(velocity.x, direction.x * ACCEL * delta, 0.1)
 			velocity.z = lerp(velocity.z, direction.z * ACCEL * delta, 0.1)
