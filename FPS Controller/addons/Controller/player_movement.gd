@@ -94,7 +94,7 @@ func update_state():
 
 	if is_on_wall_only():
 		current_state = WALL
-		jump_count_current = 0
+		jump_count_current = 1
 		if ACCEL < (default_speed + speed_wallrun):
 			ACCEL += 50
 			emit_signal("jump_updated", jump_count_current, jump_count_max)
